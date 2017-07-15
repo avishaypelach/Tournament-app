@@ -1,0 +1,54 @@
+.tournament-results {
+  padding: 30px;
+}
+.player-name {
+  text-transform: capitalize;
+}
+
+.filter-level {
+  float: right;
+  width: 100px;
+  text-align: right;
+}
+
+.filter-level-label{
+  width: 100%;
+  margin: 0;
+}
+
+.filter-level-container{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.filter-search {
+  text-align: right;
+  width:100%;
+}
+
+.filter-search-control {
+  width: 25%;
+  display: inline-block;
+}
+
+.pagination-control {
+  width: 100%;
+  text-align: center;
+}
+
+.filter-search {
+  margin-bottom: 10px;
+}
+
+.filter-search-label {
+  margin-right: 10px;
+}
+
+@media (max-width: 736px) {
+  .filter-level-container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
