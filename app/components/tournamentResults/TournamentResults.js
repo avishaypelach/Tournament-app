@@ -1,7 +1,7 @@
 import MDSpinner from "react-md-spinner";
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
-import {Pagination} from 'react-bootstrap';
+import {Pager} from 'react-bootstrap';
 import './TournamentResults.scss';
 
 export default class TournamentResults extends React.Component {
@@ -10,11 +10,12 @@ export default class TournamentResults extends React.Component {
     super(props);
     this.state = {
       page: 1,
-      sizePerPage: 4,
+      sizePerPage: 10,
       searchFilter: null,
       levelFilter: 'All',
       maxPlayers: 2000,
-      players: []
+      players: [],
+      offset: 1
     };
   }
 
@@ -53,10 +54,31 @@ export default class TournamentResults extends React.Component {
     });
   }
 
-  handlePageChange(event) {
-    this.setState({page: event}, () => {
+  prevPage() {
+    this.setState({
+      page: this.state.page - this.state.offset
+    }, () => {
       this.updateTournamentResults();
-    });
+    })
+  }
+
+  nextPage() {
+    this.setState({
+      page: this.state.page + this.state.offset
+    }, () => {
+      this.updateTournamentResults();
+    })
+  }
+
+  isFirstPage() {
+    return (this.state.page === 1) ? null :
+      <Pager.Item previous href="#" onClick={() => this.prevPage()}>&larr; Previous Page</Pager.Item>
+  }
+
+  isTherePlayers() {
+    return (this.state.players.length === 0) ? null :
+      <Pager.Item next href="#" onClick={() => this.nextPage()}>Next
+        Page &rarr;</Pager.Item>
   }
 
   render() {
@@ -68,7 +90,8 @@ export default class TournamentResults extends React.Component {
       return (
         <div className="tournament-results">
           <div className="filter-search">
-            <input className="form-control filter-search-control" placeholder="Type to search.." type="text" value={this.state.value}
+            <input className="form-control filter-search-control" placeholder="Type to search.." type="text"
+                   value={this.state.value}
                    onChange={e => this.handleSearchFilterChange(e)}/>
           </div>
           <BootstrapTable data={this.state.players} striped hover>
@@ -90,17 +113,11 @@ export default class TournamentResults extends React.Component {
             <TableHeaderColumn dataField='score'>Score</TableHeaderColumn>
           </BootstrapTable>
           <div className="pagination-control">
-            <Pagination
-              prev
-              next
-              first
-              last
-              ellipsis
-              boundaryLinks
-              items={this.state.maxPlayers / this.state.sizePerPage}
-              maxButtons={5}
-              activePage={this.state.page}
-              onSelect={e => this.handlePageChange(e)}/>
+            <Pager>
+              {this.isFirstPage()}
+              <div className="table-page-number"><span>page: {this.state.page}</span></div>
+              {this.isTherePlayers()}
+            </Pager>
           </div>
         </div>
       );
