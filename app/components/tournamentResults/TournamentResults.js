@@ -12,20 +12,18 @@ export default class TournamentResults extends React.Component {
       page: 1,
       sizePerPage: 4,
       searchFilter: null,
-      levelFilter: 'all',
+      levelFilter: 'All',
       maxPlayers: 2000,
-      players: null
+      players: []
     };
-
   }
 
   updateTournamentResults() {
-
     const xhr = new XMLHttpRequest();
     let start = (this.state.page - 1) * this.state.sizePerPage;
     let n = this.state.sizePerPage;
     let search = this.state.searchFilter ? `&search=${this.state.searchFilter}` : '';
-    let level = (this.state.levelFilter !== 'all') ? `&level=${this.state.levelFilter}` : '';
+    let level = (this.state.levelFilter !== 'All') ? `&level=${this.state.levelFilter}` : '';
     xhr.open('GET', `http://localhost:20000/api/v1/players?start=${start}&n=${n}${search}${level}`, true);
 
     xhr.addEventListener('load', () => {
@@ -44,14 +42,13 @@ export default class TournamentResults extends React.Component {
   }
 
   handleSearchFilterChange(event) {
-    this.setState({searchFilter: event.target.value}, () => {
+    this.setState({searchFilter: event.target.value, page: 1}, () => {
       this.updateTournamentResults();
     });
-
   }
 
   handleLevelFilterChange(event) {
-    this.setState({levelFilter: event.target.value}, () => {
+    this.setState({levelFilter: event.target.value, page: 1}, () => {
       this.updateTournamentResults();
     });
   }
@@ -63,10 +60,9 @@ export default class TournamentResults extends React.Component {
   }
 
   render() {
-
     if (this.state.error) {
       return <div> Error! </div>;
-    } else if (this.state.players === null) {
+    } else if (this.state.players === []) {
       return <div className="loading-time"><MDSpinner size={100}/></div>;
     } else {
       return (

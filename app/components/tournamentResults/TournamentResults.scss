@@ -46,6 +46,12 @@
   margin-right: 10px;
 }
 
+.loading-time{
+  position: absolute;
+  left: 45%;
+  top: 30%;
+}
+
 @media (max-width: 736px) {
   .filter-level-container {
     flex-direction: column;
