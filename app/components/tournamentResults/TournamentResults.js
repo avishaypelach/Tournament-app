@@ -76,7 +76,7 @@ export default class TournamentResults extends React.Component {
   }
 
   isTherePlayers() {
-    return (this.state.players.length === 0) ? null :
+    return (this.state.players.length < 10) ? null :
       <Pager.Item next href="#" onClick={() => this.nextPage()}>Next
         Page &rarr;</Pager.Item>
   }
