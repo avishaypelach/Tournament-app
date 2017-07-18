@@ -1,8 +1,8 @@
+import './TournamentResults.scss';
 import MDSpinner from "react-md-spinner";
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import 'react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 import {Pager} from 'react-bootstrap';
-import './TournamentResults.scss';
 
 export default class TournamentResults extends React.Component {
 
@@ -10,7 +10,7 @@ export default class TournamentResults extends React.Component {
     super(props);
     this.state = {
       page: 1,
-      sizePerPage: 10,
+      sizePerPage: 11,
       searchFilter: null,
       levelFilter: 'All',
       maxPlayers: 2000,
@@ -40,6 +40,7 @@ export default class TournamentResults extends React.Component {
 
   componentDidMount() {
     this.updateTournamentResults();
+    this.handlePaginationClick();
   }
 
   handleSearchFilterChange(event) {
@@ -70,13 +71,24 @@ export default class TournamentResults extends React.Component {
     })
   }
 
+  handlePaginationClick(){
+    document.addEventListener('keydown', (e) => {
+      if(e.keyCode === 37 && this.state.page > 1){
+        this.prevPage()
+      }
+      if(e.keyCode === 39 && this.state.players.length === this.state.sizePerPage){
+        this.nextPage()
+      }
+    })
+  }
+
   isFirstPage() {
     return (this.state.page === 1) ? null :
       <Pager.Item previous href="#" onClick={() => this.prevPage()}>&larr; Previous Page</Pager.Item>
   }
 
   isTherePlayers() {
-    return (this.state.players.length < 10) ? null :
+    return (this.state.players.length < this.state.sizePerPage) ? null :
       <Pager.Item next href="#" onClick={() => this.nextPage()}>Next
         Page &rarr;</Pager.Item>
   }
@@ -94,7 +106,7 @@ export default class TournamentResults extends React.Component {
                    value={this.state.value}
                    onChange={e => this.handleSearchFilterChange(e)}/>
           </div>
-          <BootstrapTable data={this.state.players} striped hover>
+          <BootstrapTable data={this.state.players.slice(0, 10)} striped hover>
             <TableHeaderColumn isKey dataField='id'>ID</TableHeaderColumn>
             <TableHeaderColumn dataField='name' columnClassName='player-name'>Player Name
             </TableHeaderColumn>
