@@ -10,7 +10,7 @@ export default class TournamentResults extends React.Component {
     super(props);
     this.state = {
       page: 1,
-      sizePerPage: 11,
+      sizePerPage: 10,
       searchFilter: null,
       levelFilter: 'All',
       maxPlayers: 2000,
@@ -19,10 +19,12 @@ export default class TournamentResults extends React.Component {
     };
   }
 
+  // <!-- AJAX -->
+
   updateTournamentResults() {
     const xhr = new XMLHttpRequest();
     let start = (this.state.page - 1) * this.state.sizePerPage;
-    let n = this.state.sizePerPage;
+    let n = this.state.sizePerPage +1;
     let search = this.state.searchFilter ? `&search=${this.state.searchFilter}` : '';
     let level = (this.state.levelFilter !== 'All') ? `&level=${this.state.levelFilter}` : '';
     xhr.open('GET', `http://localhost:20000/api/v1/players?start=${start}&n=${n}${search}${level}`, true);
@@ -38,10 +40,14 @@ export default class TournamentResults extends React.Component {
     xhr.send(null);
   }
 
+  // <!-- when app is uploading -->
+
   componentDidMount() {
     this.updateTournamentResults();
     this.handlePaginationClick();
   }
+
+  // <!-- handle search filter -->
 
   handleSearchFilterChange(event) {
     this.setState({searchFilter: event.target.value, page: 1}, () => {
@@ -49,11 +55,15 @@ export default class TournamentResults extends React.Component {
     });
   }
 
+  // <!-- handle level filter  -->
+
   handleLevelFilterChange(event) {
     this.setState({levelFilter: event.target.value, page: 1}, () => {
       this.updateTournamentResults();
     });
   }
+
+  // <!-- pagination -->
 
   prevPage() {
     this.setState({
@@ -76,7 +86,7 @@ export default class TournamentResults extends React.Component {
       if(e.keyCode === 37 && this.state.page > 1){
         this.prevPage()
       }
-      if(e.keyCode === 39 && this.state.players.length === this.state.sizePerPage){
+      if(e.keyCode === 39 && this.state.players.length === this.state.sizePerPage + 1){
         this.nextPage()
       }
     })
@@ -88,14 +98,16 @@ export default class TournamentResults extends React.Component {
   }
 
   isTherePlayers() {
-    return (this.state.players.length < this.state.sizePerPage) ? null :
+    return (this.state.players.length < this.state.sizePerPage + 1) ? null :
       <Pager.Item next href="#" onClick={() => this.nextPage()}>Next
         Page &rarr;</Pager.Item>
   }
 
+  // <!-- app UI -->
+
   render() {
     if (this.state.error) {
-      return <div> Error! </div>;
+      return <div className="error"> Error! </div>;
     } else if (this.state.players === []) {
       return <div className="loading-time"><MDSpinner size={100}/></div>;
     } else {
@@ -106,7 +118,7 @@ export default class TournamentResults extends React.Component {
                    value={this.state.value}
                    onChange={e => this.handleSearchFilterChange(e)}/>
           </div>
-          <BootstrapTable data={this.state.players.slice(0, 10)} striped hover>
+          <BootstrapTable data={this.state.players.slice(0,10)} striped hover>
             <TableHeaderColumn isKey dataField='id'>ID</TableHeaderColumn>
             <TableHeaderColumn dataField='name' columnClassName='player-name'>Player Name
             </TableHeaderColumn>
